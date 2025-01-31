@@ -20,7 +20,7 @@ services:
         labels:
           traefik.http.routers.prometheus.rule: "Host(`${PROMETHEUS_HOST}`)"
           traefik.docker.network: "edge-proxy"
-    
+
     grafana:
         image: grafana/grafana
         container_name: grafana
@@ -35,6 +35,7 @@ services:
             - edge-proxy
         labels:
           traefik.http.routers.grafana.rule: "Host(`${GRAFANA_HOST}`)"
+          traefik.http.routers.pubgrafana.rule: "Host(`${PUB_GRAFANA_HOST}`)"
           traefik.docker.network: "edge-proxy"
 
 volumes:
