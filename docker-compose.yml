@@ -14,8 +14,12 @@ services:
           interval: 30s
           timeout: 10s
           retries: 3
+        networks:
+            - edge-proxy
+            - exporters
         labels:
           traefik.http.routers.prometheus.rule: "Host(`${PROMETHEUS_HOST}`)"
+          traefik.docker.network: "edge-proxy"
     
     grafana:
         image: grafana/grafana
@@ -27,13 +31,19 @@ services:
             - GF_AUTH_ANONYMOUS_ENABLED=false
             - GF_SECURITY_ADMIN_USER=${GF_USERNAME}
             - GF_SECURITY_ADMIN_PASSWORD=${GF_PASSWORD}
+        networks:
+            - edge-proxy
         labels:
           traefik.http.routers.grafana.rule: "Host(`${GRAFANA_HOST}`)"
+          traefik.docker.network: "edge-proxy"
 
 volumes:
     prom-data:
 
 networks:
-    default:
+    edge-proxy:
         name: edge-proxy
+        external: true
+    exporters:
+        name: exporters
         external: true
