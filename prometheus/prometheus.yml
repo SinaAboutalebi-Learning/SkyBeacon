@@ -9,8 +9,29 @@ scrape_configs:
     scrape_timeout: 30s
     scrape_interval: 5m
 
-scrape_configs:
-  - job_name: 'blackbox_dns'
+  - job_name: 'blackbox_http_pshgmn'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://www.playstation.com/
+          - https://www.wikipedia.org/
+          - https://www.bing.com/
+          - https://google.com/
+          - https://github.com/
+          - https://www.aparat.com/
+          - https://divar.ir/
+          - https://www.digikala.com/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: neteye-exporter-pshgmn.mastkhiar.xyz
+
+  - job_name: 'blackbox_dns_pshgmn'
     metrics_path: /probe
     params:
       module: [dns_query]
@@ -18,55 +39,14 @@ scrape_configs:
       - targets:
           - 8.8.4.4
           - 8.8.8.8
-          - 1.1.1.1
           - 1.0.0.1
+          - 1.1.1.1
           - 9.9.9.9
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
-      - source_labels: [__address__]
-        regex: "neteye-exporter-pshgmn.*"
-        target_label: datacenter
-        replacement: "Datacenter-1"
-      - source_labels: [__address__]
-        regex: "neteye-exporter-mbn.*"
-        target_label: datacenter
-        replacement: "Datacenter-2"
-    static_configs:
-      - targets:
-          - neteye-exporter-pshgmn.mastkhiar.xyz
-          - neteye-exporter-mbn.mastkhiar.xyz
-
-  - job_name: 'blackbox_http'
-    metrics_path: /probe
-    params:
-      module: [http_2xx]
-    static_configs:
-      - targets:
-          - https://playstation.com/
-          - https://wikipedia.org/
-          - https://bing.com/
-          - https://google.com/
-          - https://github.com/
-          - https://aparat.com/
-          - https://divar.ir/
-          - https://digikala.com/
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - source_labels: [__address__]
-        regex: "neteye-exporter-pshgmn.*"
-        target_label: datacenter
-        replacement: "Datacenter-1"
-      - source_labels: [__address__]
-        regex: "neteye-exporter-mbn.*"
-        target_label: datacenter
-        replacement: "Datacenter-2"
-    static_configs:
-      - targets:
-          - neteye-exporter-pshgmn.mastkhiar.xyz
-          - neteye-exporter-mbn.mastkhiar.xyz
+      - target_label: __address__
+        replacement: neteye-exporter-pshgmn.mastkhiar.xyz
+        
