@@ -5,9 +5,9 @@ services:
     hostname: prometheus-${HOSTNAME}
     restart: unless-stopped
 
-    mem_limit: 512m
-    mem_reservation: 256m
-    cpus: 0.50
+    mem_limit: 768m
+    mem_reservation: 384m
+    cpus: 0.75
 
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -65,9 +65,9 @@ services:
     hostname: grafana-${HOSTNAME}
     restart: unless-stopped
 
-    mem_limit: 512m
-    mem_reservation: 256m
-    cpus: 0.50
+    mem_limit: 768m
+    mem_reservation: 384m
+    cpus: 0.75
 
     volumes:
       - grafana-data:/var/lib/grafana
