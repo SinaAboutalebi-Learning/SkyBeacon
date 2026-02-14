@@ -60,7 +60,7 @@ services:
       - "traefik.http.services.prometheus.loadBalancer.server.port=9090"
 
   grafana:
-    image: grafana/grafana:12.3
+    image: grafana/grafana:12.3.3
     container_name: grafana-${HOSTNAME}
     hostname: grafana-${HOSTNAME}
     restart: unless-stopped
