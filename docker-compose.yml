@@ -124,11 +124,53 @@ services:
       # Service
       - "traefik.http.services.grafana.loadBalancer.server.port=3000"
 
+  loki:
+    image: grafana/loki:3.6.5
+    container_name: loki-${HOSTNAME}
+    hostname: loki-${HOSTNAME}
+    restart: unless-stopped
+
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: 0.50
+
+    command:
+      - "-config.file=/etc/loki/local-config.yml"
+
+    volumes:
+      - loki-data:/loki
+      - ./loki/config.yml:/etc/loki/local-config.yml:ro
+
+    networks:
+      - webproxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=webproxy"
+
+      # HTTPS
+      - "traefik.http.routers.loki.rule=Host(`${LOKI_SUB:-loki}.${DOMAIN}`)"
+      - "traefik.http.routers.loki.entrypoints=websecure"
+      - "traefik.http.routers.loki.tls.certresolver=le"
+      - "traefik.http.routers.loki.middlewares=ip-whitelist,web-auth"
+      - "traefik.http.routers.loki.service=loki"
+
+      # HTTP → HTTPS
+      - "traefik.http.routers.loki-http.rule=Host(`${LOKI_SUB:-loki}.${DOMAIN}`)"
+      - "traefik.http.routers.loki-http.entrypoints=web"
+      - "traefik.http.routers.loki-http.middlewares=force-https,ip-whitelist,web-auth"
+      - "traefik.http.routers.loki-http.service=loki"
+
+      # Service port
+      - "traefik.http.services.loki.loadBalancer.server.port=3100"
+
 volumes:
   prometheus-data:
     name: prometheus-data
   grafana-data:
     name: grafana-data
+  loki-data:
+    name: loki-data
 
 networks:
   webproxy:
